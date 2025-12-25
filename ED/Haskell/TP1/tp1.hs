@@ -1,4 +1,3 @@
-import Distribution.Simple.Build (repl)
 -- 1. 
 
 -- a. Dado un número devuelve su sucesor.
@@ -320,3 +319,52 @@ dropN n (x : xs) = dropN (n-1) xs
 splitN :: Int -> [a] -> ([a], [a])
 splitN n xs = (takeN n xs, dropN n xs)
                  
+
+-- ANEXO 
+-- 1.
+-- Dada una lista xs de enteros devuelve una tupla de listas, donde la primera componente contiene
+-- todos aquellos números positivos de xs y la segunda todos aquellos números negativos de xs.
+
+particionPorSigno :: [Int] -> ([Int], [Int])
+-- particionPorSigno xs = (filter (> 0) xs, filter (< 0) xs) 
+particionPorSigno [] = ([], [])
+particionPorSigno (x : xs)
+            | x > 0     = (x : pos, neg)
+            | otherwise = (pos, x : neg)
+            where (pos, neg) = particionPorSigno xs 
+
+
+-- 2.
+-- Dada una lista de enteros xs devuelve una tupla de listas, donde la primera componente contiene todos aquellos
+-- números pares de xs y la segunda todos aquellos números impares de xs.
+particionPorParidad :: [Int] -> ([Int], [Int])
+-- particionPorParidad xs = (filter esPar xs, filter (not esPar xs))
+--                       where esPar :: Int -> Bool 
+--                             esPar x = mod x 2 == 0
+particionPorParidad [] = ([], [])
+particionPorParidad (x : xs) 
+      | esPar x = (x : pares, impares)
+      | otherwise = (pares, x : impares)
+      where (pares, impares) = particionPorParidad xs 
+
+
+-- 4.
+-- Dada una lista xs devuelve una lista donde cada sublista contiene elementos contiguos
+-- iguales de xs.
+-- agrupar "AABCCC" = ["AA", "B", "CCC"]
+agrupar :: Eq a => [a] -> [[a]]
+agrupar []       = []
+agrupar (x : xs) = (x : iguales) : agrupar resto 
+      where 
+            (iguales, resto) = span (== x) xs -- 'span' devuelve una tupla
+-- 5.
+-- Devuelve True so la primera lista es prefijo de la segunda.
+esPrefijo :: Eq a => [a] -> [a] -> Bool
+esPrefijo [] _              = True
+esPrefijo _ []              = False   
+esPrefijo (x : xs) (y : ys) = x == y && esPrefijo xs ys 
+
+-- 6. 
+-- Devuelve True si la primera lista es sufijo de la segunda.
+esSufijo :: Eq a => [a] -> [a] -> Bool 
+esSufijo xs ys =  esPrefijo (reversa xs) (reversa ys)
