@@ -1,3 +1,4 @@
+import Distribution.Simple.Build (repl)
 -- 1. 
 
 -- a. Dado un número devuelve su sucesor.
@@ -257,3 +258,65 @@ zipSort (x : xs) (y : ys) = (minimo x y, maximo x y) : zipSort xs ys
         where minimo :: Int -> Int -> Int 
               minimo x y | x < y      = x 
                    | otherwise = y  
+
+-- 2.2 RECURSIÓN SOBRE NÚMEROS 
+-- a. 
+-- Dado un número n devuelve su factorial. 
+-- Pre: El número n debe ser >= 0. 
+factorial :: Int -> Int 
+factorial 0 = 1 
+factorial n = factorial (n-1) * n 
+
+-- Usando optimización de cola.
+factorial' :: Int -> Int -> Int 
+factorial' 0 acum = acum 
+factorial' n acum = factorial' (n-1) (acum * n)
+
+-- b. 
+-- Dado un número n devuelve una lista cuyos elementos sean los números comprendidos entre n y 1
+-- (inclusive); si el número es inferior a 1, devuelve la lista vacía.
+cuentaRegresiva :: Int -> [Int] 
+cuentaRegresiva n | n > 0     =  n : cuentaRegresiva (n-1)
+                  | otherwise = []
+
+-- c. 
+-- Dadon un número n devuelve una lista cuyos elementos sean los números comprendidos entre 1 y n 
+-- (inclusive).
+contarHasta :: Int -> [Int] 
+contarHasta n | n > 0     = snoc (contarHasta (n-1)) n 
+              | otherwise = []  
+
+-- d. 
+-- Dado un número n y un elemento e devuelve una lista en la que el elemento e se repite 
+-- n veces. 
+replicar :: Int -> a -> [a]
+replicar 0 e = [] 
+replicar n e = e : replicar (n-1) e  
+
+-- e. 
+-- Dados dos números n y m devuelve una lista cuyos elementos sean los números entre n y m 
+-- (inclusive). 
+desdeHasta :: Int -> Int -> [Int] 
+desdeHasta n m | n <= m    = n : desdeHasta (n+1) m
+               | otherwise = [] 
+
+-- f. 
+-- Dados un número n y una lista xs, devuelve una lista con los primeros n elementos de xs. 
+-- Si xs posee menos de n elementos, se devuelve la lista completa. 
+takeN :: Int -> [a] -> [a] 
+takeN _ []       = []
+takeN n (x : xs) = x : take (n-1) xs  
+
+-- g. 
+-- Dados un número n y una lista xs, devuelve una lista sin los primeros n elementos de la lista
+-- recibida. Si la lista posee menos de n elementos, se devuelve una lista vacía. 
+dropN :: Int -> [a] -> [a] 
+dropN _ []       = []
+dropN n (x : xs) = dropN (n-1) xs
+
+-- h. 
+-- Dados un número n y una lista xs, devuelve un par donde la primera componente es la lista que 
+-- resulta de aplicar 'takeN' a xs y la segunda componente el resultado de aplicar 'dropN' a xs. 
+splitN :: Int -> [a] -> ([a], [a])
+splitN n xs = (takeN n xs, dropN n xs)
+                 
