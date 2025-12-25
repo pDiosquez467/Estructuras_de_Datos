@@ -166,3 +166,94 @@ algunaVerdad = foldr (||) True
 pertenece :: Eq a => a -> [a] -> Bool
 pertenece _ [] = False
 pertenece e (x:  xs) = (e == x) || pertenece e xs
+
+
+-- j. 
+-- Dados un elemento e y una lista xs cuenta la cantidad de apariciones de e en xs. 
+apariciones :: Eq a => a -> [a] -> Int
+apariciones _ [] = 0
+apariciones e (x : xs) | e == x    = 1 + apariciones e xs
+                       | otherwise = apariciones e xs
+
+-- k.
+-- Dados un elemento e y una lista xs devuelve todos los elementos de xs que son menores a e. 
+filtrarMenores :: Ord a => a -> [a] -> [a]
+filtrarMenores _ []       = []
+filtrarMenores e (x : xs) | x < e     = x : filtrarMenores e xs
+                          | otherwise = filtrarMenores e xs
+
+-- filtrarMenores' e = filter (< e) 
+
+-- l. 
+-- Dados un elemento y una lista, filtra (elimina) todas las ocurrencias de ese elemento en la lista.
+filtrarElemento :: Eq a => a -> [a] -> [a]
+filtrarElemento _ []       = []
+filtrarElemento e (x : xs) | e == x    = filtrarElemento e xs
+                           | otherwise = x : filtrarElemento e xs
+
+-- m. 
+-- Dada una lista de listas, devuelve la lista de sus longitudes.
+mapLongitudes :: [[a]] -> [Int]
+-- mapLongitudes = map longitud
+mapLongitudes [] = []
+mapLongitudes (xs : xss) = longitud xs : mapLongitudes xss
+
+-- n. 
+-- Dado un número n y una lista de listas, devuelve la lista de aquellas listas que tienen más de n 
+-- elementos. 
+longitudMayorA :: Int -> [[a]] -> [[a]]
+longitudMayorA _ []         = []
+longitudMayorA n (xs : xss) | longitud xs > n = xs : longitudMayorA n xss
+                            | otherwise       = longitudMayorA n xss
+-- longitudMayorA' n = filter (> n . longitud) 
+
+-- o. 
+
+
+-- p. 
+-- Dados una lista y un elemento, devuelve una lista con ese elemento agregado al final de la misma.
+snoc :: [a] -> a -> [a]
+-- snoc [] e       = [e] 
+-- snoc (x : xs) e = x : (snoc xs e) 
+snoc xs e = foldr (:) [e] xs
+
+-- q. 
+-- Dadas dos listas devuelve la lista con todos los elementos de la primera lista y todos los de la
+-- segunda a continuación. 
+append :: [a] -> [a] -> [a]
+append = foldl snoc
+
+
+-- r. 
+-- Dada una lista de listas, devuelve una única lista con todos sus elementos. 
+aplanar :: [[a]] -> [a] 
+-- aplanar []         = [] 
+-- aplanar (xs : xss) = append xs (aplanar xss) 
+aplanar = foldr append [] 
+
+
+-- s. 
+-- Dada una lista devuelve la lista con todos los elementos de atrás para adelante. 
+reversa :: [a] -> [a] 
+reversa []       = []
+reversa (x : xs) = snoc (reversa xs) x  
+
+-- t. 
+-- Dadas dos listas de enteros, devuelve una lista donde el elemento en la posición n es el
+-- máximo entre el elemento n de la primera y de la segunda lista, teniendo en cuenta que no
+-- necesariamente las lista tienen la misma longitud. 
+zipMaximos :: [Int] -> [Int] -> [Int]
+zipMaximos [] ys             = ys
+zipMaximos xs []             = xs 
+zipMaximos (x : xs) (y : ys) = maximo x y : zipMaximos xs ys 
+
+-- u.
+-- Dadas dos listas de enteros de igual longitud, devuelve una lista de pares '(min, max)', donde
+-- 'min' y 'max' son el mínimo y el máximo entre los elementos de ambas listas en la misma
+-- posición. 
+zipSort :: [Int] -> [Int] -> [(Int, Int)]
+zipSort [] _ = [] 
+zipSort (x : xs) (y : ys) = (minimo x y, maximo x y) : zipSort xs ys        
+        where minimo :: Int -> Int -> Int 
+              minimo x y | x < y      = x 
+                   | otherwise = y  
