@@ -114,10 +114,10 @@ medio3 x y z = x + y + z - minimum [x,y,z] - maximum [x,y,z]
 
 -- SINÓNIMOS DE TIPOS
 
-type Edad = Int
+-- type Edad = Int
 
-edadDeRoque :: Edad
-edadDeRoque = 32 
+-- edadDeRoque :: Edad
+-- edadDeRoque = 32 
 
 -- PARES
 -- Propósito:
@@ -144,4 +144,51 @@ fBis :: (a, (b, c)) -> ((a, b), c)
 fBis p = ((fst p, fst sp), snd sp)
 		 where sp = snd p
 
+
+-- TIPOS ENUMERATIVOS
+--
+data Simpson = Homero 
+			 | Marge 
+			 | Bart 
+			 | Lisa 
+			 | Maggie
+       		 deriving Show
+
+type Edad = Int 
+
+edad :: Simpson -> Edad
+edad Homero = 36
+edad Marge  = 34
+edad Bart   = 10
+edad Lisa   = 8
+edad Maggie = 1 
+
+-- 'madre' es una función parcial
+-- Propósito: Dado un Simpson, devuelve a su madre.
+-- Pre: El Simpson debe ser 'Bart', 'Lisa' o 'Maggie'.
+--
+madre :: Simpson -> Simpson
+madre Bart   = Marge
+madre Lisa   = Marge
+madre Maggie = Marge
+
+-- EJERCICIO
+--
+
+type Cordenada = (Int, Int)
+
+data Direccion = Norte
+			   | Este
+			   | Sur
+			   | Oeste
+			   deriving Show
+
+-- Propósito: Devuelve la coordenada que resultaría de moverse
+-- una unidad hacia la dirección indicada.
+--
+desplazar :: Coordenada -> Direccion -> Coordenada
+desplazar (latitud, longitud) Norte = (latitud + 1, longitud) 
+desplazar (latitud, longitud) Este  = (latitud, longitud + 1) 
+desplazar (latitud, longitud) Sur   = (latitud - 1, longitud) 
+desplazar (latitud, longitud) Oeste = (latitud, longitud - 1) 
 
