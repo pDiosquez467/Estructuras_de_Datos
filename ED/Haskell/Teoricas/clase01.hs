@@ -1,4 +1,5 @@
 
+
 -- EJEMPLO
 {-- 
 	Roque quiere cocinar pizza para n invitados, cado uno de 
@@ -117,3 +118,30 @@ type Edad = Int
 
 edadDeRoque :: Edad
 edadDeRoque = 32 
+
+-- PARES
+-- Propósito:
+-- Dado un par, devuelve un nuevo par con las componentes del 
+-- original invertidas.
+--
+dadoVuelta :: (a, b) -> (b, a)
+dadoVuelta par = (snd par, fst par)
+
+-- PATTERN MATCHING
+--
+dadoVueltaBis :: (a, b) -> (b, a)
+dadoVueltaBis (x, y) = (y, x)
+
+
+-- EJERCICIO
+-- Definir una función sobre pares que tenga el siguiente tipo:
+-- f :: (a, (b, c)) -> ((a, b), c)
+
+f :: (a, (b, c)) -> ((a, b), c)
+f (x, (y, z)) = ((x, y), z)
+
+fBis :: (a, (b, c)) -> ((a, b), c)
+fBis p = ((fst p, fst sp), snd sp)
+		 where sp = snd p
+
+
