@@ -108,13 +108,8 @@ maximo3 x y z = maximo (maximo x y) z
 									then x 
 									else y 
 
-
-medio3 :: Int -> Int -> Int -> Int 
-medio3 x y z = if x < y && y < z
-					then y
-					else (if y < x && x < z
-							then x
-							else z)
+medio3 :: Int -> Int -> Int -> Int
+medio3 x y z = x + y + z - minimum [x,y,z] - maximum [x,y,z]
 
 -- SINÓNIMOS DE TIPOS
 
