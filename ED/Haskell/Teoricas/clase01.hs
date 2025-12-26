@@ -75,3 +75,50 @@ minutosEnTotal d h m = horasEnTotal d h * 60 + m
 segundosTotales :: Int -> Int -> Int -> Int -> Int 
 segundosTotales d h m s = 
 	minutosEnTotal d h m * 60 + s
+
+-- ALTERNATIVA CONDICIONAL
+-- El 'if' no es un comando, sino una expresión.
+-- Al ser una expresión, tiene un valor y por tanto siempre
+-- debe tener una rama 'then' y otra 'else'.
+
+expr1 :: Int 
+expr1 = (if False then 1 else 2) * 3
+
+expr2 :: Char
+expr2 = if False then 'a' else 'b'
+
+-- Propósito:
+-- Dados dos números denota el menor de ellos.
+--
+minimo :: Int -> Int -> Int
+minimo x y = if x < y 
+			  	then x 
+				else y
+
+-- EJERCICIO
+
+minimo3 :: Int -> Int -> Int -> Int 
+minimo3 x y z = minimo (minimo x y) z 
+
+maximo3 :: Int -> Int -> Int -> Int 
+maximo3 x y z = maximo (maximo x y) z
+				where
+					maximo :: Int -> Int -> Int
+					maximo x y = if x > y 
+									then x 
+									else y 
+
+
+medio3 :: Int -> Int -> Int -> Int 
+medio3 x y z = if x < y && y < z
+					then y
+					else (if y < x && x < z
+							then x
+							else z)
+
+-- SINÓNIMOS DE TIPOS
+
+type Edad = Int
+
+edadDeRoque :: Edad
+edadDeRoque = 32 
