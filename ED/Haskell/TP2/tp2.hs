@@ -112,6 +112,12 @@ data Pokemon = MkP TipoDePokemon Energia
 tipoP :: Pokemon -> TipoDePokemon
 tipoP (MkP t _) = t
 
+-- Indica si el pokemon tiene energía para pelear.
+--
+tieneEnergia :: Pokemon -> Bool
+tieneEnergia (MkP _ e) = e > 0
+
+--
 data Entrenador = MkE Nombre [Pokemon]
 				  deriving Show
 
@@ -130,8 +136,8 @@ elementoGanador Fuego  = Agua
 -- Se considera que gana si su elemento es opuesto al del otro.
 -- Si poseen el mismo elemento se considera que no gana.
 --
-leGanaA :: Pokemon -> Pokemon -> Bool 
-
+leGanaA :: Pokemon -> Pokemon -> Bool
+leGanaA p otro = esDeTipo (elementoGanador (tipoP otro)) p 
 
 -- Agrega un pokemon a la lista de pokemons del entrenador.
 --
@@ -170,6 +176,33 @@ lePuedeGanar (MkE _ []) _       = False
 lePuedeGanar (MkE _ (p : ps)) o =
 	leGanaA p p' || lePuedeGanar (MkE _ ps) o 
 
+
+-- Indica si el entrenador tiene al menos un pokemon del tipo dado.
+--
+tieneAlMenosUnPokemonDeTipo :: TipoDePokemon -> Entrenador -> Bool
+tieneAlMenosUnPokemonDeTipo t e = 
+	cantidadDePokemonsDeTipo t (pokemonsE e) >= 1
+
+
+-- Dados un tipo de pokemon y dos entrenadores, devuelve True
+-- si ambos entrenadores tienen al menos un pokemon de ese tipo
+-- y que tenga energia para pelear.
+--
+puedenPelear :: TipoDePokemon -> Entrenador -> Entrenador -> Bool
+puedenPelear t e otro = 
+	tieneUnPokemonDeTipoConEnergia t e && 
+	tieneUnPokemonDeTipoConEnergia t otro
+
+tieneUnPokemonDeTipoConEnergia :: TipoDePokemon -> Entrenador -> Bool
+tieneUnPokemonDeTipoConEnergia t e =
+	existeUnPokemonDeTipoConEnergia t (pokemonsE e)
+
+existeUnPokemonDeTipoConEnergia :: TipoDePokemon -> [Pokemon] -> Bool
+existeUnPokemonDeTipoConEnergia _ []       = False 
+existeUnPokemonDeTipoConEnergia t (p : ps) = 
+	(esDeTipo t p && energiaP p > 0) 
+	|| existeUnPokemonDeTipoConEnergia t ps
+
 -- Dado un entrenador devuelve True si ese entrenador posee
 -- al menos un pokemon de cada tipo posible.
 --
@@ -180,12 +213,9 @@ esExperto e =
 	tieneAlMenosUnPokemonDeTipo Fuego e
 
 
-tieneAlMenosUnPokemonDeTipo :: TipoDePokemon -> Entrenador -> Bool
-tieneAlMenosUnPokemonDeTipo t e = 
-	cantidadDePokemonsDeTipo t (pokemonsE e) >= 1
-  
-
-
-
-
-
+-- Dada una lista de entrenadores devuelve una lista con todos
+-- los pokemons de cada entrenador.
+--
+fiestaPokemon :: [Entrenadores] -> [Pokemon]
+fiestaPokemon []       = []
+fiestaPokemon (e : es) = pokemonsE e ++ fiestaPokemon es
