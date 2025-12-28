@@ -1,4 +1,3 @@
-import Distribution.Simple.Build (repl)
 -- 1. 
 
 -- a. Dado un número devuelve su sucesor.
