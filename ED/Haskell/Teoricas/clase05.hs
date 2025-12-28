@@ -14,11 +14,6 @@ codA :: Agencia -> Cod
 codA (Agente c _) = c
 codA (Jefe c _ _) = c
 
--- Pre: La agencia debe ser de un solo agente. 
---
-ciudadA :: Agencia -> Ciudad
-ciudadA (Agente _ c) = c
-
 --
 nroEspias :: Agencia -> Int
 nroEspias (Agente _ _ ) = 1
@@ -100,3 +95,17 @@ caminoHasta (Jefe cod agencia1 agencia2) cod'
   | cod == cod'             = [cod]
   | esEspiaDe agencia1 cod' = cod : caminoHasta agencia1 cod'
   | otherwise               = cod : caminoHasta agencia2 cod'
+
+-- Propósito:
+-- Dada una agencia y dos códigos de espía, devuelve la 
+-- lista de espías por los que hay que pasar para llegar 
+-- desde el primero hasta el segundo. 
+-- Pre:
+-- Los dos códigos de espía deben pertenecer a la agencia. 
+-- El segundo código debe ser un subordinado del primero. 
+--
+intermediarios :: Agencia -> Cod -> Cod -> [Cod]
+intermediarios agencia cod1 =
+     caminoHasta (subagencia agencia cod1)
+
+-- 
