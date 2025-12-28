@@ -78,7 +78,7 @@ subagencia (Jefe cod agencia1 agencia2) cod'
 -- Todo espía es subordinados de sí mismo. 
 --
 subordinados :: Agencia -> Cod -> [Cod]
-subordinados agencia cod = 
+subordinados agencia cod =
     todosLosEspias (subagencia agencia cod)
 
 --
@@ -86,3 +86,17 @@ todosLosEspias :: Agencia -> [Cod]
 todosLosEspias (Agente cod _ )              = [cod]
 todosLosEspias (Jefe cod agencia1 agencia2) =
     [cod] ++ todosLosEspias agencia1 ++ todosLosEspias agencia2
+
+-- Propósito:
+-- Dada una agencia y un código de espía, devuelve la lista 
+-- de espías por los que hay que pasar para llegar desde la
+-- raíz de la agencia hasta el espía indicado. 
+-- Pre:
+-- El código de espía debe pertenecer a la agencia. 
+-- 
+caminoHasta :: Agencia -> Cod -> [Cod]
+caminoHasta (Agente cod _ ) _ = [cod]
+caminoHasta (Jefe cod agencia1 agencia2) cod'
+  | cod == cod'             = [cod]
+  | esEspiaDe agencia1 cod' = cod : caminoHasta agencia1 cod'
+  | otherwise               = cod : caminoHasta agencia2 cod'
