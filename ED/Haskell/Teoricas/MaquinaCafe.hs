@@ -26,7 +26,7 @@ data MaquinaCafe = MC Int -- cantidad de agua   (en cc)
                       Int -- cantidad de café   (en g)
                       Int -- cantidad de azúcar (en g)
                       Int -- recaudación        ($)
-                      deriving Show
+                    
 
 -------------------------------------------------------------------------------
 -- IMPLEMENTACIÓN DE LA INTERFAZ
