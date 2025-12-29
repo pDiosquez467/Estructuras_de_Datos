@@ -1,86 +1,103 @@
-{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
-module MaquinaCafe where
+module MaquinaCafe
+  ( -- * Tipos exportados
+    TipoCafe(..)
+  , MaquinaCafe    -- Se exporta el tipo, pero NO el constructor (TDA Opaco)
+    -- * Constructores y Comandos
+  , nuevaMC        -- :: MaquinaCafe
+  , pedirCafeMC    -- :: MaquinaCafe -> TipoCafe -> MaquinaCafe
+  , mantenerMC     -- :: MaquinaCafe -> MaquinaCafe
+    -- * Consultas
+  , disponibleMC   -- :: MaquinaCafe -> TipoCafe -> Bool
+  , recaudacionMC  -- :: MaquinaCafe -> Int
+  ) where
 
----- Interfaz de la máquina de café
+-------------------------------------------------------------------------------
+-- INTERFAZ
+-------------------------------------------------------------------------------
 
 data TipoCafe = CafeSolo
               | CafeDulce
               | CafeCortado
               deriving Show
 
-nuevaMC       :: MaquinaCafe
-disponibleMC  :: MaquinaCafe -> TipoCafe -> Bool
--- Pre: El tipo de café debe estar disponible.
---
-pedirCafeMC   :: MaquinaCafe -> TipoCafe -> MaquinaCafe
-mantenerMC    :: MaquinaCafe -> MaquinaCafe
-recaudacionMC :: MaquinaCafe -> Int
-
----- Implementación de la máquina de café 
-
+-- | El tipo abstracto de dato. Oculta su estructura interna (agua, leche, etc).
 data MaquinaCafe = MC Int -- cantidad de agua   (en cc)
                       Int -- cantidad de leche  (en cc)
                       Int -- cantidad de café   (en g)
-                      Int -- cantidad de aźucar (en g)
+                      Int -- cantidad de azúcar (en g)
                       Int -- recaudación        ($)
+                      deriving Show
 
+-------------------------------------------------------------------------------
+-- IMPLEMENTACIÓN DE LA INTERFAZ
+-------------------------------------------------------------------------------
+
+-- | Crea una máquina vacía y sin recaudación.
+nuevaMC :: MaquinaCafe
 nuevaMC = MC 0 0 0 0 0
 
-disponibleMC (MC agua leche cafe azucar _) tc = 
-  agua      >= aguaRequerida tc 
-  && leche  >= lecheRequerida tc 
-  && cafe   >= cafeRequerido tc 
-  && azucar >= azucarRequerida tc 
+-- | Verifica si hay recursos suficientes para el tipo de café solicitado.
+disponibleMC :: MaquinaCafe -> TipoCafe -> Bool
+disponibleMC (MC agua leche cafe azucar _) tc =
+  agua      >= aguaRequerida tc  &&
+  leche     >= lecheRequerida tc &&
+  cafe      >= cafeRequerido tc  &&
+  azucar    >= azucarRequerida tc
 
-aguaRequerida :: TipoCafe -> Int 
-aguaRequerida cafeSolo    = 200
-aguaRequerida cafeDulce   = 200
-aguaRequerida cafeCortado = 150
+-- | Sirve un café, descontando recursos y aumentando la recaudación.
+-- PRE: Debe haberse verificado previamente con 'disponibleMC'.
+pedirCafeMC :: MaquinaCafe -> TipoCafe -> MaquinaCafe
+pedirCafeMC (MC agua leche cafe azucar recaudacion) tc =
+  MC (agua   - aguaRequerida tc)
+     (leche  - lecheRequerida tc)
+     (cafe   - cafeRequerido tc)
+     (azucar - azucarRequerida tc)
+     (recaudacion + precioCafe tc)
 
-lecheRequerida :: TipoCafe -> Int 
-lecheRequerida cafeSolo    = 0
-lecheRequerida cafeDulce   = 0
-lecheRequerida cafeCortado = 50
+-- | Recarga la máquina a su capacidad máxima y reinicia la recaudación a 0.
+mantenerMC :: MaquinaCafe -> MaquinaCafe
+mantenerMC _ =
+  MC capacidadMaximaAgua
+     capacidadMaximaLeche
+     capacidadMaximaCafe
+     capacidadMaximaAzucar
+     0
 
-cafeRequerido :: TipoCafe -> Int  
-cafeRequerido cafeSolo    = 40
-cafeRequerido cafeDulce   = 40
-cafeRequerido cafeCortado = 30
+-- | Devuelve el monto total recaudado hasta el momento.
+recaudacionMC :: MaquinaCafe -> Int
+recaudacionMC (MC _ _ _ _ recaudacion) = recaudacion
 
-azucarRequerida :: TipoCafe -> Int 
-azucarRequerida cafeSolo    = 0
-azucarRequerida cafeDulce   = 12
-azucarRequerida cafeCortado = 12
+-------------------------------------------------------------------------------
+-- FUNCIONES AUXILIARES Y CONSTANTES
+-------------------------------------------------------------------------------
 
-precioCafe :: TipoCafe -> Int 
-precioCafe _ = 100 
+-- Costos de recursos por tipo de café
+aguaRequerida :: TipoCafe -> Int
+aguaRequerida CafeSolo    = 200
+aguaRequerida CafeDulce   = 200
+aguaRequerida CafeCortado = 150
 
-capacidadMaximaAgua :: Int
-capacidadMaximaAgua = 20000
-capacidadMaximaLeche :: Int
-capacidadMaximaLeche = 2000
-capacidadMaximaCafe :: Int
-capacidadMaximaCafe = 1000
-capacidadMaximaAzucar :: Int
-capacidadMaximaAzucar = 1000 
--- 
-pedirCafeMC (MC agua leche cafe azucar recaudacion) tc = 
-    MC 
-    (agua   - aguaRequerida tc)
-    (leche  - lecheRequerida tc)
-    (cafe   - cafeRequerido tc)
-    (azucar - azucarRequerida tc)
-    (recaudacion + precioCafe tc)
+lecheRequerida :: TipoCafe -> Int
+lecheRequerida CafeSolo    = 0
+lecheRequerida CafeDulce   = 0
+lecheRequerida CafeCortado = 50
 
---
-mantenerMC _ = 
-    MC 
-    capacidadMaximaAgua
-    capacidadMaximaLeche
-    capacidadMaximaCafe 
-    capacidadMaximaAzucar
-    0
+cafeRequerido :: TipoCafe -> Int
+cafeRequerido CafeSolo    = 40
+cafeRequerido CafeDulce   = 40
+cafeRequerido CafeCortado = 30
 
+azucarRequerida :: TipoCafe -> Int
+azucarRequerida CafeSolo    = 0
+azucarRequerida CafeDulce   = 12
+azucarRequerida CafeCortado = 12
 
--- 
-recaudacionMC (MC _ _ _ _ recaudacion) = recaudacion 
+precioCafe :: TipoCafe -> Int
+precioCafe _ = 100
+
+-- Capacidades máximas de la máquina
+capacidadMaximaAgua, capacidadMaximaLeche, capacidadMaximaCafe, capacidadMaximaAzucar :: Int
+capacidadMaximaAgua   = 20000
+capacidadMaximaLeche  = 2000
+capacidadMaximaCafe   = 1000
+capacidadMaximaAzucar = 1000
