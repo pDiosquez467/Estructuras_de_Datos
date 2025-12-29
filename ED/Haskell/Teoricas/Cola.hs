@@ -1,6 +1,4 @@
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use newtype instead of data" #-}
-module Cola where
+module ED.Haskell.Teoricas.Cola where
 
 ---- Interfaz del módulo Cola
 
@@ -92,4 +90,44 @@ desencolarC :: Cola a -> Cola a
 --         else init' xs 
 
 ----------------------------------------------------------------
--- Variante 3:
+-- Variante 3: usando dos listas => front y back 
+--
+
+-- estaVaciaC: es O(1).
+
+-- encolarC: es O(1). 
+
+-- proximoC y desencolarC son O(1) amortizado. 
+
+-- Ups :)
+
+data Cola a = MkC [a] [a]
+
+vaciaC = MkC [] []
+
+estaVaciaC (MkC fs xs)  = null fs && null xs
+
+encolarC x (MkC fs xs)  = MkC fs (x : xs)
+
+proximoC (MkC fs xs)    =
+    if null fs
+        then last xs  -- O(n)
+        else head fs  -- O(1) 
+
+desencolarC (MkC fs xs) =
+    if null fs
+        then MkC (tail (reverse' xs)) []  -- O(n)
+        else MkC (tail fs) xs            -- O(1) 
+
+-- reverse en O(n)
+--
+
+-- Complejidad: O(n), siendo n la longitud de la lista. 
+--
+reverse' :: [a] -> [a]
+reverse' xs = reverse'' xs []
+
+reverse'' :: [a] -> [a] -> [a]
+-- reverse'' [] ys = ys 
+-- reverse'' (x : xs) ys = reverse'' xs (x : ys)
+reverse'' xs ys = foldl (flip (:)) ys xs
